@@ -1,7 +1,5 @@
 #!/bin/sh
-ACTIVITY_TIMEOUT=1
 TOTAL_IDLE_TIME=0
-MAX_IDLE_TIME=60
 
 echo "$(date +"%D %T") true"
 
