@@ -3,7 +3,7 @@ ACTIVITY_TIMEOUT=1
 TOTAL_IDLE_TIME=0
 MAX_IDLE_TIME=60
 
-echo "$(date +"%D %T") : Work started"
+echo "$(date +"%D %T") true"
 
 # ./user_activity_log
 
@@ -48,12 +48,12 @@ do
     #echo $TOTAL_IDLE_TIME
   elif [ -n "$USER_ACTIVITY" -a $TOTAL_IDLE_TIME -ge $MAX_IDLE_TIME  ]; then
     TOTAL_IDLE_TIME=0
-    echo "$(date +"%D %T") : Work started"
+    echo "$(date +"%D %T") true"
     #echo $TOTAL_IDLE_TIME
   fi
 
   if [ $TOTAL_IDLE_TIME -eq $MAX_IDLE_TIME ]; then
-    echo "$(date +"%D %T") : Idle"
+    echo "$(date +"%D %T") false"
   fi
 
   USER_ACTIVITY=""
