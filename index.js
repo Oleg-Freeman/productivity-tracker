@@ -1,6 +1,6 @@
 const exec = require('child_process').exec;
 const { getConfig } = require('./config');
-// const GoogleSheets = require('./google-sheets');
+const GoogleSheets = require('./google-sheets');
 
 const TRACKER_MAX_IDLE_TIME = getConfig('TRACKER_MAX_IDLE_TIME');
 const TRACKER_ACTIVITY_TIMEOUT = getConfig('TRACKER_ACTIVITY_TIMEOUT');
@@ -9,16 +9,17 @@ child = exec(
     `ACTIVITY_TIMEOUT=${+TRACKER_ACTIVITY_TIMEOUT} MAX_IDLE_TIME=${+TRACKER_MAX_IDLE_TIME} ./get_input_devises_activity.sh`
 );
 
-// const googleSheets = new GoogleSheets();
+const googleSheets = new GoogleSheets();
 let previousState = false;
 
 child.stdout.setEncoding('utf8');
-child.stdout.on('data', async (isWorking) => {
-    // TODO: add data to queue?
-
-    if (!isWorking || typeof isWorking !== 'string' || isWorking.length === 0) {
-        throw new Error('Invalid data: ' + isWorking);
+child.stdout.on('data', async (data) => {
+    if (!data || typeof data !== 'string' || data.length === 0) {
+        throw new Error('Invalid data: ' + data);
     }
+
+    const isWorking = data.trim();
+
     if (previousState === isWorking) {
         throw new Error(
             `Get input device error: duplicate state "${isWorking}"`
@@ -27,17 +28,21 @@ child.stdout.on('data', async (isWorking) => {
 
     switch (isWorking.trim()) {
         case 'true': {
-            console.log('Previous state: ' + previousState);
-            console.log('Current state: ' + isWorking);
+            // console.log('Previous state: ' + previousState);
+            // console.log('Current state: ' + isWorking);
+            await googleSheets.submitWorkTracking(true);
 
             previousState = true;
+
             break;
         }
         case 'false': {
-            console.log('Previous state: ' + previousState);
-            console.log('Current state: ' + isWorking);
+            // console.log('Previous state: ' + previousState);
+            // console.log('Current state: ' + isWorking);
+            await googleSheets.submitWorkTracking(false);
 
             previousState = false;
+
             break;
         }
         default: {
