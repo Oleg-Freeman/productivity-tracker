@@ -1,32 +1,21 @@
-const { google } = require('googleapis')
 const exec = require('child_process').exec;
+const { getConfig } = require('./config');
 
-require('dotenv').config();
-
-const { TRACKER_ACTIVITY_TIMEOUT, TRACKER_MAX_IDLE_TIME, GOOGLE_SPREADSHEET_ID } = process.env;
+const  TRACKER_MAX_IDLE_TIME = getConfig('TRACKER_MAX_IDLE_TIME');
+const TRACKER_ACTIVITY_TIMEOUT = getConfig('TRACKER_ACTIVITY_TIMEOUT');
 
 child = exec(
     `ACTIVITY_TIMEOUT=${+TRACKER_ACTIVITY_TIMEOUT} MAX_IDLE_TIME=${+TRACKER_MAX_IDLE_TIME} ./get_input_devises_activity.sh`
 );
-const auth = new google.auth.GoogleAuth({
-    keyFile: 'credentials.json',
-    scopes: 'https://www.googleapis.com/auth/spreadsheets'
-});
-const spreadsheetId = GOOGLE_SPREADSHEET_ID;
 
 child.stdout.setEncoding('utf8');
 child.stdout.on('data', async (data) => {
     // data string format: MM/DD/YY HH:MM:SS true/false
+    // TODO: add data to queue
+    // TODO: integrate Google Sheets service
+    const [trackingData, trackingTime, isWorking] = data.split(' ');
+    const outputDate = new Date(trackingTime);
     console.log(data);
-
-    const client = await auth.getClient();
-    const googleSheets = google.sheets({ version: 'v4', auth: client });
-    // const metadata = await googleSheets.spreadsheets.get({
-    //     auth,
-    //     spreadsheetId,
-    // });
-
-    // console.log(metadata.data);
 });
 
 child.stderr.setEncoding('utf8');

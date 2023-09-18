@@ -14,6 +14,8 @@ See `.env.example` for required environment variables.
 - awk v1.3.4
 - sed v4.8
 - node.js v18.17.1
+- Google Sheets API v4 credentials
+```
 
 ## Installation
 
