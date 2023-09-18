@@ -1,7 +1,7 @@
 #!/bin/sh
 TOTAL_IDLE_TIME=0
 
-echo "$(date +"%D %T") true"
+echo "true"
 
 # ./user_activity_log
 
@@ -46,12 +46,12 @@ do
     #echo $TOTAL_IDLE_TIME
   elif [ -n "$USER_ACTIVITY" -a $TOTAL_IDLE_TIME -ge $MAX_IDLE_TIME  ]; then
     TOTAL_IDLE_TIME=0
-    echo "$(date +"%D %T") true"
+    echo "true"
     #echo $TOTAL_IDLE_TIME
   fi
 
   if [ $TOTAL_IDLE_TIME -eq $MAX_IDLE_TIME ]; then
-    echo "$(date +"%D %T") false"
+    echo "false"
   fi
 
   USER_ACTIVITY=""

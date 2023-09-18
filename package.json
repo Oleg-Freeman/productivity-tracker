@@ -14,5 +14,8 @@
     "dayjs": "^1.11.9",
     "dotenv": "^16.3.1",
     "googleapis": "^126.0.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.3"
   }
 }

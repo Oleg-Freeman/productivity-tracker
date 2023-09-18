@@ -1,12 +1,12 @@
 const { getConfig } = require('./config');
 const { google } = require('googleapis');
-const dayjs = require('dayjs')
+const dayjs = require('dayjs');
 
 class GoogleSheets {
     constructor() {
         this.auth = new google.auth.GoogleAuth({
             keyFile: 'credentials.json',
-            scopes: 'https://www.googleapis.com/auth/spreadsheets'
+            scopes: 'https://www.googleapis.com/auth/spreadsheets',
         });
         this.spreadsheetId = getConfig('GOOGLE_SPREADSHEET_ID');
         this.client = null;
@@ -37,7 +37,9 @@ class GoogleSheets {
             auth,
             spreadsheetId,
         });
-        const sheet = metaData.data.sheets.find(sheet => sheet.properties.title === sheetName);
+        const sheet = metaData.data.sheets.find(
+            (sheet) => sheet.properties.title === sheetName
+        );
 
         if (!sheet) {
             await googleSheets.spreadsheets.batchUpdate({
@@ -64,7 +66,7 @@ class GoogleSheets {
                 'Break Duration',
                 'Total Work Hours',
                 'Total Break Hours',
-                'Total Work Day Duration'
+                'Total Work Day Duration',
             ]);
         }
     }
@@ -91,7 +93,7 @@ class GoogleSheets {
             auth,
             spreadsheetId,
             range: `${sheetName}`,
-        })
+        });
 
         return rows.data.values;
     }
@@ -109,33 +111,28 @@ class GoogleSheets {
             const allRows = await this.getRows(sheetName);
             const count = allRows.length;
             const workDurationFormula = `=D${count}-C${count}`;
-            const breakDurationFormula = count !== 2 ? `=C${count}-D${count - 1}` : '00:00:00';
+            const breakDurationFormula =
+                count !== 2 ? `=C${count}-D${count - 1}` : '00:00:00';
             const totalWorkHoursFormula = `=SUM(E2:E${count})`;
             const totalBreakHoursFormula = `=SUM(F3:F${count})`;
             const totalWorkDayDurationFormula = `=D${count}-C2`;
 
-            await this.appendRow(
-                `${sheetName}!D${count}:D`,
-                [
-                    time,
-                    workDurationFormula,
-                    breakDurationFormula,
-                    totalWorkHoursFormula,
-                    totalBreakHoursFormula,
-                    totalWorkDayDurationFormula
-                ]
-            );
+            await this.appendRow(`${sheetName}!D${count}:D`, [
+                time,
+                workDurationFormula,
+                breakDurationFormula,
+                totalWorkHoursFormula,
+                totalBreakHoursFormula,
+                totalWorkDayDurationFormula,
+            ]);
         }
         const rows = await this.getRows(sheetName);
         console.log(rows);
     }
 }
 
-const googleSheets = new GoogleSheets();
+// const googleSheets = new GoogleSheets();
+//
+// googleSheets.submitWorkTracking(false);
 
-googleSheets.submitWorkTracking(false);
-
-// module.exports = GoogleSheets;
-
-
-
+module.exports = GoogleSheets;
