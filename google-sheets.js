@@ -56,6 +56,7 @@ class GoogleSheets {
                 },
             });
             await this.appendRow(sheetName, [
+                'Task Name',
                 'Work Date',
                 'Work Start',
                 'Break Start',
@@ -97,23 +98,24 @@ class GoogleSheets {
 
     async submitWorkTracking(isWorking) {
         const sheetName = dayjs().add(1, 'month').format('MM.YYYY');
+        const taskName = 'Work';
         const date = dayjs().format('DD.MM.YYYY');
         const time = dayjs().format('HH:mm:ss');
         await this.createSheetIfNotExists(sheetName);
 
         if (isWorking) {
-            await this.appendRow(`${sheetName}`, [date, time]);
+            await this.appendRow(`${sheetName}`, [taskName, date, time]);
         } else {
             const allRows = await this.getRows(sheetName);
             const count = allRows.length;
-            const workDurationFormula = `=C${count}-B${count}`;
-            const breakDurationFormula = count !== 2 ? `=B${count}-C${count - 1}` : '00:00:00';
-            const totalWorkHoursFormula = `=SUM(D2:D${count})`;
-            const totalBreakHoursFormula = `=SUM(E3:E${count})`;
-            const totalWorkDayDurationFormula = `=C${count}-B2`;
+            const workDurationFormula = `=D${count}-C${count}`;
+            const breakDurationFormula = count !== 2 ? `=C${count}-D${count - 1}` : '00:00:00';
+            const totalWorkHoursFormula = `=SUM(E2:E${count})`;
+            const totalBreakHoursFormula = `=SUM(F3:F${count})`;
+            const totalWorkDayDurationFormula = `=D${count}-C2`;
 
             await this.appendRow(
-                `${sheetName}!C${count}:C`,
+                `${sheetName}!D${count}:D`,
                 [
                     time,
                     workDurationFormula,
@@ -129,11 +131,11 @@ class GoogleSheets {
     }
 }
 
-// const googleSheets = new GoogleSheets();
-//
-// googleSheets.submitWorkTracking(false);
+const googleSheets = new GoogleSheets();
 
-module.exports = GoogleSheets;
+googleSheets.submitWorkTracking(false);
+
+// module.exports = GoogleSheets;
 
 
 
